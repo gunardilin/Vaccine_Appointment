@@ -6,7 +6,7 @@
 # Created Date: Monday, May 24th 2021, 3:22:13 pm
 # Author: Gunardi Ali
 # -----
-# Last Modified: Monday, May 24th 2021, 3:24:24 pm
+# Last Modified: Monday, May 24th 2021, 3:38:38 pm
 # Modified By: Gunardi Ali
 # -----
 # Copyright (c) 2021 Gunardi Ali
@@ -37,31 +37,33 @@ from datetime import datetime
 from time import sleep
 
 # Get location practice_ids
-url = 'https://www.doctolib.de/allgemeinmedizin/81667-muenchen'
+url1 = 'https://www.doctolib.de/allgemeinmedizin/81667-muenchen'
+url2 = 'https://www.doctolib.de/gemeinschaftspraxis/81667-muenchen'
 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'}
 
 practice_ids_hrefs_list = []
-for page in range(1, 100):
-    payload = {'page':page}
+for url in [url1, url2]:
+    for page in range(1, 100):
+        payload = {'page':page}
 
-    response = requests.get(url, headers=headers, params=payload)
-    if response.status_code == 404:
-        print("Page {} was not found".format(page))
-        break
-    
-    else:
-        print('Page: %s' %page)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        # print("Output of response.text: {}".format(response.text))
-        divs = soup.find_all('div',{'class':'dl-search-result'})
+        response = requests.get(url, headers=headers, params=payload)
+        if response.status_code == 404:
+            print("Page {} was not found".format(page))
+            break
         
-        for count, div in enumerate(divs):
-            practice_id = div['id'].split('-')[-1]
-            href = soup.find_all('a',{'class':'dl-search-result-name'})[count]['href']
-            # practice_href = div['href']
-            print(practice_id, href)
-            practice_ids_hrefs_list.append(practice_id + ',' + href)
-        sleep(1)
+        else:
+            print('Page: %s' %page)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            # print("Output of response.text: {}".format(response.text))
+            divs = soup.find_all('div',{'class':'dl-search-result'})
+            
+            for count, div in enumerate(divs):
+                practice_id = div['id'].split('-')[-1]
+                href = soup.find_all('a',{'class':'dl-search-result-name'})[count]['href']
+                # practice_href = div['href']
+                print(practice_id, href)
+                practice_ids_hrefs_list.append(practice_id + ',' + href)
+            sleep(1)
 with open('practice_list.txt', 'w') as f:
     for item in practice_ids_hrefs_list:
         f.write("%s\n" % item)
