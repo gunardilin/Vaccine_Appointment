@@ -22,11 +22,11 @@ while available != True:
     json_biontech = requests.get(url, headers=headers, params=payload_biontech).json()
         
     if json_biontech['message'] == 'Diese Termine stehen zu einem späteren Zeitpunkt wieder für eine Online-Buchung zur Verfügung. ':
-        print('Check again later!')
+        print('*** Check again later!')
         sleep(5)
     else:
-        print("Vaccine available")
-        print("Open following website:", doctor_url)
+        print("*** Vaccine available")
+        print("*** Open following website:", doctor_url)
         available = True 
 
 
